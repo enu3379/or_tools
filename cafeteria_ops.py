@@ -722,12 +722,14 @@ def main():
     ap.add_argument("--gap", type=float, default=0.05)
     ap.add_argument("--scenarios", type=int, default=200)
     ap.add_argument("--pareto", action="store_true", help="인건비 가중치를 바꿔 2회 더 풀기")
+    ap.add_argument("--buffer", type=float, default=0.85, help="계획 시 처리량 사용 상한. 낮출수록 인력 여유 증가")
     ap.add_argument("--data-dir", type=Path)
     ap.add_argument("--export-data", type=Path)
     ap.add_argument("--out", type=Path, default=Path("out"))
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     i = load_instance(a.data_dir) if a.data_dir else make_instance(a.restaurants, a.employees, a.special)
+    i.capacity_buffer = a.buffer
     if a.export_data:
         export_instance(i, a.export_data)
     print(f"[data] 수요 {i.groups.d.sum():.0f}, 그룹 {i.G}, 식당 {i.R}, 라인 {i.K}, 슬롯 {i.T}, 배정 간선 {len(arcs(i))}")
